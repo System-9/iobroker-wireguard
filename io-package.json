@@ -1,0 +1,452 @@
+{
+  "common": {
+    "name": "wireguard-s2s",
+    "version": "0.2.0",
+    "titleLang": {
+      "en": "WireGuard Site-to-Site",
+      "de": "WireGuard Site-to-Site"
+    },
+    "desc": {
+      "en": "Safely configure and monitor one WireGuard site-to-site tunnel on an ioBroker Linux host.",
+      "de": "Konfiguriert und überwacht sicher einen WireGuard-Site-to-Site-Tunnel auf einem ioBroker-Linux-Host."
+    },
+    "news": {
+      "0.2.0": {
+        "en": "Added secure private/public key generation to the adapter configuration page.",
+        "de": "Sichere Erzeugung privater und öffentlicher Schlüssel in der Adapterkonfiguration ergänzt."
+      },
+      "0.1.0": {
+        "en": "Initial implementation with one site-to-site peer, monitoring and a privileged helper.",
+        "de": "Erste Implementierung mit einer Site-to-Site-Gegenstelle, Monitoring und privilegiertem Helper."
+      }
+    },
+    "authors": [
+      "Andreas Metag"
+    ],
+    "keywords": [
+      "wireguard",
+      "vpn",
+      "site-to-site",
+      "network"
+    ],
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "platform": "Javascript/Node.js",
+    "main": "build/main.js",
+    "icon": "wireguard-s2s.svg",
+    "extIcon": "https://raw.githubusercontent.com/System-9/ioBroker.wireguard-s2s/main/admin/wireguard-s2s.svg",
+    "mode": "daemon",
+    "type": "network",
+    "connectionType": "local",
+    "dataSource": "poll",
+    "compact": true,
+    "messagebox": true,
+    "enabled": false,
+    "loglevel": "info",
+    "stopBeforeUpdate": true,
+    "tier": 2,
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=6.12.3"
+      }
+    ]
+  },
+  "native": {
+    "interfaceName": "iowg0",
+    "localAddresses": "10.200.0.1/30",
+    "localNetworks": "192.168.1.0/24",
+    "remoteNetworks": "10.200.0.2/32, 192.168.2.0/24",
+    "privateKey": "",
+    "localPublicKey": "",
+    "listenPort": 51820,
+    "peerPublicKey": "",
+    "peerPresharedKey": "",
+    "endpointHost": "",
+    "endpointPort": 51820,
+    "persistentKeepalive": 25,
+    "mtu": 1420,
+    "enableIPv4Forwarding": true,
+    "enableIPv6Forwarding": false,
+    "autoApply": false,
+    "pollInterval": 15,
+    "handshakeTimeout": 180
+  },
+  "protectedNative": [
+    "privateKey",
+    "peerPresharedKey"
+  ],
+  "encryptedNative": [
+    "privateKey",
+    "peerPresharedKey"
+  ],
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Information",
+          "de": "Information"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Tunnel connected",
+          "de": "Tunnel verbunden"
+        },
+        "type": "boolean",
+        "role": "indicator.connected",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.interfaceUp",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Interface is up",
+          "de": "Schnittstelle ist aktiv"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.helperReady",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Privileged helper ready",
+          "de": "Privilegierter Helper bereit"
+        },
+        "type": "boolean",
+        "role": "indicator.ready",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.configValid",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Configuration valid",
+          "de": "Konfiguration gültig"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.lastError",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Last error",
+          "de": "Letzter Fehler"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.interfaceName",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Interface name",
+          "de": "Schnittstellenname"
+        },
+        "type": "string",
+        "role": "info.name",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.localPublicKey",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Local public key",
+          "de": "Lokaler öffentlicher Schlüssel"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.localNetworks",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Local LAN networks",
+          "de": "Lokale LAN-Netze"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.listenPort",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "WireGuard listen port",
+          "de": "WireGuard-Listen-Port"
+        },
+        "type": "number",
+        "role": "value",
+        "unit": "",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Remote peer",
+          "de": "Gegenstelle"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.connected",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Peer connected",
+          "de": "Gegenstelle verbunden"
+        },
+        "type": "boolean",
+        "role": "indicator.connected",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.publicKey",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Peer public key",
+          "de": "Öffentlicher Schlüssel der Gegenstelle"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.endpoint",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Current endpoint",
+          "de": "Aktueller Endpunkt"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.allowedIPs",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Allowed IP networks",
+          "de": "Erlaubte IP-Netze"
+        },
+        "type": "string",
+        "role": "text",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.latestHandshake",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Latest handshake",
+          "de": "Letzter Handshake"
+        },
+        "type": "number",
+        "role": "value.time",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.handshakeAge",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Handshake age",
+          "de": "Alter des Handshakes"
+        },
+        "type": "number",
+        "role": "value.interval",
+        "unit": "s",
+        "read": true,
+        "write": false,
+        "def": -1
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.rxBytes",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Received bytes",
+          "de": "Empfangene Bytes"
+        },
+        "type": "number",
+        "role": "value",
+        "unit": "B",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "peer.txBytes",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Transmitted bytes",
+          "de": "Gesendete Bytes"
+        },
+        "type": "number",
+        "role": "value",
+        "unit": "B",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "control",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Control",
+          "de": "Steuerung"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.apply",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Apply configuration",
+          "de": "Konfiguration anwenden"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.down",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Bring interface down",
+          "de": "Schnittstelle herunterfahren"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.refresh",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Refresh status",
+          "de": "Status aktualisieren"
+        },
+        "type": "boolean",
+        "role": "button",
+        "read": false,
+        "write": true,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
+}
