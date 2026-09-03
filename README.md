@@ -145,3 +145,9 @@ The uninstaller removes the helper and sudo policy. It intentionally leaves inte
 ## License
 
 MIT
+
+## Changelog
+
+### **WORK IN PROGRESS**
+- (ioBroker-Bot) Adapter requires admin >= 7.8.23 now.
+
