@@ -22,7 +22,7 @@
     "network"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "main": "build/main.js",
   "files": [
