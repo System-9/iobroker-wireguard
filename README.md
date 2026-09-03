@@ -145,3 +145,5 @@ The uninstaller removes the helper and sudo policy. It intentionally leaves inte
 ## License
 
 MIT
+
+[Older changelogs can be found there](CHANGELOG_OLD.md)
