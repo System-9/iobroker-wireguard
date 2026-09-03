@@ -34,7 +34,6 @@
       "license": "MIT"
     },
     "platform": "Javascript/Node.js",
-    "main": "build/main.js",
     "icon": "wireguard-s2s.svg",
     "extIcon": "https://raw.githubusercontent.com/System-9/iobroker-wireguard/main/admin/wireguard-s2s.svg",
     "mode": "daemon",
