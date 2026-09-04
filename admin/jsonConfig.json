@@ -1,167 +1,134 @@
 {
+  "i18n": true,
   "type": "tabs",
-  "i18n": false,
   "items": {
     "tunnel": {
       "type": "panel",
-      "label": {
-        "en": "Tunnel",
-        "de": "Tunnel"
-      },
+      "label": "tab_tunnel",
       "items": {
         "notice": {
           "type": "staticText",
-          "text": {
-            "en": "Linux only. Install the privileged helper before starting the adapter. Private and preshared keys are encrypted by ioBroker.",
-            "de": "Nur Linux. Vor dem Start des Adapters muss der privilegierte Helper installiert werden. Private und Pre-Shared Keys werden von ioBroker verschlüsselt."
-          },
+          "text": "notice_linux_helper",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "interfaceName": {
           "type": "text",
-          "label": {
-            "en": "Interface name",
-            "de": "Schnittstellenname"
-          },
-          "help": {
-            "en": "Must match iowg0 through iowg999.",
-            "de": "Muss iowg0 bis iowg999 entsprechen."
-          },
+          "label": "interface_name",
+          "help": "interface_name_help",
           "newLine": true,
-          "sm": 4
+          "xs": 12,
+          "sm": 4,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
         },
         "listenPort": {
           "type": "number",
-          "label": {
-            "en": "Listen port",
-            "de": "Listen-Port"
-          },
+          "label": "listen_port",
           "min": 1,
           "max": 65535,
-          "sm": 4
+          "xs": 12,
+          "sm": 4,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
         },
         "mtu": {
           "type": "number",
-          "label": "MTU",
-          "help": {
-            "en": "0 keeps the kernel default.",
-            "de": "0 behält den Kernel-Standardwert."
-          },
+          "label": "mtu",
+          "help": "mtu_help",
           "min": 0,
           "max": 9000,
-          "sm": 4
+          "xs": 12,
+          "sm": 4,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
         },
         "localAddresses": {
           "type": "text",
-          "label": {
-            "en": "Local tunnel addresses (CIDR)",
-            "de": "Lokale Tunnel-Adressen (CIDR)"
-          },
-          "help": {
-            "en": "Comma-separated, for example 10.200.0.1/30.",
-            "de": "Kommagetrennt, zum Beispiel 10.200.0.1/30."
-          },
+          "label": "local_addresses",
+          "help": "local_addresses_help",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "localNetworks": {
           "type": "text",
-          "label": {
-            "en": "Local LAN networks (documentation)",
-            "de": "Lokale LAN-Netze (Dokumentation)"
-          },
-          "help": {
-            "en": "Networks behind this site. Configure these as AllowedIPs on the remote site.",
-            "de": "Netze hinter diesem Standort. Auf der Gegenstelle als AllowedIPs eintragen."
-          },
+          "label": "local_networks",
+          "help": "local_networks_help",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "remoteNetworks": {
           "type": "text",
-          "label": {
-            "en": "Remote tunnel and LAN networks (AllowedIPs)",
-            "de": "Entfernte Tunnel- und LAN-Netze (AllowedIPs)"
-          },
-          "help": {
-            "en": "Routes are created for every entry. Default routes are rejected.",
-            "de": "Für jeden Eintrag wird eine Route angelegt. Default-Routen werden abgewiesen."
-          },
+          "label": "remote_networks",
+          "help": "remote_networks_help",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "privateKey": {
           "type": "password",
-          "label": {
-            "en": "Local private key",
-            "de": "Lokaler privater Schlüssel"
-          },
+          "label": "private_key",
           "visible": false,
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "localPublicKey": {
           "type": "text",
-          "label": {
-            "en": "Local public key",
-            "de": "Lokaler öffentlicher Schlüssel"
-          },
-          "help": {
-            "en": "Send this public key to the remote site. Never send the private key.",
-            "de": "Diesen öffentlichen Schlüssel an die Gegenstelle übertragen. Niemals den Private Key übertragen."
-          },
+          "label": "local_public_key",
+          "help": "local_public_key_help",
           "readOnly": true,
           "copyToClipboard": true,
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "generateKeypair": {
           "type": "sendTo",
           "command": "generateKeypair",
-          "label": {
-            "en": "Generate new private and public key",
-            "de": "Neuen privaten und öffentlichen Schlüssel erzeugen"
-          },
+          "label": "generate_keypair",
           "icon": "auth",
           "variant": "contained",
           "useNative": true,
           "showProcess": true,
           "timeout": 10000,
           "result": {
-            "keypairGenerated": {
-              "en": "The key pair was generated. Save the configuration to store the private key encrypted.",
-              "de": "Das Schlüsselpaar wurde erzeugt. Die Konfiguration speichern, damit der Private Key verschlüsselt abgelegt wird."
-            }
+            "keypairGenerated": "keypair_generated"
           },
           "error": {
-            "generationFailed": {
-              "en": "The key pair could not be generated.",
-              "de": "Das Schlüsselpaar konnte nicht erzeugt werden."
-            },
-            "notAuthorized": {
-              "en": "Only an ioBroker Admin instance may generate a key pair.",
-              "de": "Nur eine ioBroker-Admin-Instanz darf ein Schlüsselpaar erzeugen."
-            }
+            "generationFailed": "keypair_generation_failed",
+            "notAuthorized": "keypair_not_authorized"
           },
           "confirm": {
             "condition": "!!data.privateKey",
-            "title": {
-              "en": "Replace existing key?",
-              "de": "Vorhandenen Schlüssel ersetzen?"
-            },
-            "text": {
-              "en": "Generating a new key makes the previous public key invalid. The remote site must be updated.",
-              "de": "Ein neuer Schlüssel macht den bisherigen öffentlichen Schlüssel ungültig. Die Gegenstelle muss aktualisiert werden."
-            },
-            "ok": {
-              "en": "Generate",
-              "de": "Erzeugen"
-            },
-            "cancel": {
-              "en": "Cancel",
-              "de": "Abbrechen"
-            },
+            "title": "replace_key_title",
+            "text": "replace_key_text",
+            "ok": "generate",
+            "cancel": "cancel",
             "type": "warning"
           },
           "newLine": true,
@@ -175,120 +142,121 @@
     },
     "peer": {
       "type": "panel",
-      "label": {
-        "en": "Remote peer",
-        "de": "Gegenstelle"
-      },
+      "label": "tab_peer",
       "items": {
         "peerPublicKey": {
           "type": "text",
-          "label": {
-            "en": "Peer public key",
-            "de": "Öffentlicher Schlüssel der Gegenstelle"
-          },
+          "label": "peer_public_key",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "peerPresharedKey": {
           "type": "password",
-          "label": {
-            "en": "Preshared key (optional)",
-            "de": "Pre-Shared Key (optional)"
-          },
+          "label": "preshared_key",
           "visible": false,
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "endpointHost": {
           "type": "text",
-          "label": {
-            "en": "Endpoint host (optional for responder)",
-            "de": "Endpunkt-Host (für Responder optional)"
-          },
-          "help": {
-            "en": "DNS name, IPv4 or IPv6 address without brackets.",
-            "de": "DNS-Name, IPv4- oder IPv6-Adresse ohne Klammern."
-          },
+          "label": "endpoint_host",
+          "help": "endpoint_host_help",
           "newLine": true,
-          "sm": 8
+          "xs": 12,
+          "sm": 8,
+          "md": 8,
+          "lg": 8,
+          "xl": 8
         },
         "endpointPort": {
           "type": "number",
-          "label": {
-            "en": "Endpoint port",
-            "de": "Endpunkt-Port"
-          },
+          "label": "endpoint_port",
           "min": 1,
           "max": 65535,
-          "sm": 4
+          "xs": 12,
+          "sm": 4,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
         },
         "persistentKeepalive": {
           "type": "number",
-          "label": {
-            "en": "Persistent keepalive (seconds)",
-            "de": "Persistent Keepalive (Sekunden)"
-          },
+          "label": "persistent_keepalive",
           "min": 0,
           "max": 65535,
           "newLine": true,
-          "sm": 6
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         },
         "handshakeTimeout": {
           "type": "number",
-          "label": {
-            "en": "Connected timeout (seconds)",
-            "de": "Verbunden-Timeout (Sekunden)"
-          },
+          "label": "handshake_timeout",
           "min": 30,
           "max": 86400,
-          "sm": 6
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         }
       }
     },
     "operation": {
       "type": "panel",
-      "label": {
-        "en": "Operation",
-        "de": "Betrieb"
-      },
+      "label": "tab_operation",
       "items": {
         "enableIPv4Forwarding": {
           "type": "checkbox",
-          "label": {
-            "en": "Enable IPv4 forwarding at runtime",
-            "de": "IPv4-Forwarding zur Laufzeit aktivieren"
-          },
+          "label": "enable_ipv4_forwarding",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "enableIPv6Forwarding": {
           "type": "checkbox",
-          "label": {
-            "en": "Enable IPv6 forwarding at runtime",
-            "de": "IPv6-Forwarding zur Laufzeit aktivieren"
-          },
+          "label": "enable_ipv6_forwarding",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "autoApply": {
           "type": "checkbox",
-          "label": {
-            "en": "Apply configuration when the adapter starts",
-            "de": "Konfiguration beim Adapterstart anwenden"
-          },
+          "label": "auto_apply",
           "newLine": true,
-          "sm": 12
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "pollInterval": {
           "type": "number",
-          "label": {
-            "en": "Status interval (seconds)",
-            "de": "Statusintervall (Sekunden)"
-          },
+          "label": "poll_interval",
           "min": 5,
           "max": 3600,
           "newLine": true,
-          "sm": 6
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
         }
       }
     }

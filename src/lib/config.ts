@@ -34,10 +34,14 @@ const INTERFACE_PATTERN = /^iowg[0-9]{1,3}$/;
 const HOSTNAME_PATTERN = /^(?=.{1,253}$)(?!-)(?:[a-zA-Z0-9-]{1,63}\.)*[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
 
 export function splitList(value: string): string[] {
-    return [...new Set(String(value ?? "")
-        .split(/[\s,;]+/)
-        .map(item => item.trim())
-        .filter(Boolean))];
+    return [
+        ...new Set(
+            String(value ?? "")
+                .split(/[\s,;]+/)
+                .map(item => item.trim())
+                .filter(Boolean),
+        ),
+    ];
 }
 
 export function validateCidr(value: string, field: string): 4 | 6 {

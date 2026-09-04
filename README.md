@@ -1,6 +1,16 @@
-# ioBroker WireGuard Site-to-Site
+![Logo](admin/wireguard-s2s.svg)
+
+# ioBroker.wireguard-s2s
+
+[![NPM version](https://img.shields.io/npm/v/iobroker.wireguard-s2s.svg)](https://www.npmjs.com/package/iobroker.wireguard-s2s)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.wireguard-s2s.svg)](https://www.npmjs.com/package/iobroker.wireguard-s2s)
+![Number of installations](https://iobroker.live/badges/wireguard-s2s-installed.svg)
+![Current version in stable repository](https://iobroker.live/badges/wireguard-s2s-stable.svg)
+[![Test and Release](https://github.com/System-9/ioBroker.wireguard-s2s/actions/workflows/test-and-release.yml/badge.svg)](https://github.com/System-9/ioBroker.wireguard-s2s/actions/workflows/test-and-release.yml)
 
 This adapter configures and monitors **one WireGuard site-to-site peer** on the Linux host running ioBroker. It creates a dedicated `iowgN` interface, assigns tunnel addresses, installs routes for the remote networks and exposes handshake and traffic states in ioBroker.
+
+It integrates the open-source [WireGuard VPN](https://www.wireguard.com/) with ioBroker. WireGuard is a registered trademark of Jason A. Donenfeld.
 
 The first release deliberately has a narrow scope: one adapter instance manages one interface and one peer. Run a second instance for another site.
 
@@ -19,9 +29,9 @@ It does **not** modify nftables/iptables, configure NAT, open a router port, cha
 ## Requirements
 
 - Linux ioBroker host;
-- Node.js 20 or newer;
+- Node.js 22 or newer;
 - ioBroker js-controller 6.0.11 or newer;
-- ioBroker Admin 6.12.3 or newer;
+- ioBroker Admin 7.6.20 or newer;
 - installed `wireguard-tools`, `iproute2`, `procps`/`sysctl` and `sudo`;
 - UDP port forwarding on the internet router when this site accepts incoming WireGuard connections.
 
@@ -34,11 +44,10 @@ sudo apt install wireguard-tools iproute2 procps sudo
 
 ## Installation
 
-Install the adapter in ioBroker, then install its privileged helper once on the ioBroker host from the adapter directory:
+Install the adapter in ioBroker, then install its privileged helper once on the ioBroker host. The default ioBroker installation path is shown below; adjust it if your installation uses a different installation directory:
 
 ```bash
-cd /opt/iobroker/node_modules/iobroker.wireguard-s2s
-sudo ./scripts/install-helper.sh
+sudo /opt/iobroker/node_modules/iobroker.wireguard-s2s/scripts/install-helper.sh
 ```
 
 The installer:
@@ -51,7 +60,7 @@ The installer:
 For a different service user:
 
 ```bash
-sudo IOBROKER_SERVICE_USER=my-iobroker-user ./scripts/install-helper.sh
+sudo IOBROKER_SERVICE_USER=my-iobroker-user /opt/iobroker/node_modules/iobroker.wireguard-s2s/scripts/install-helper.sh
 ```
 
 Do not point the sudo policy at the helper inside `node_modules`: package files may be writable during updates. The installed root-owned copy is an intentional security boundary.
@@ -125,23 +134,52 @@ The root-owned state directory is `/var/lib/iobroker-wireguard-s2s`. `control.do
 ## Development
 
 ```bash
-npm install
-npm test
+npm run check
+npm run lint
+npm run test
+npm run test:integration
+npm run coverage
 node --check helper/iobroker-wireguard-s2s-helper.js
 ```
 
-Unit tests cover configuration normalization, endpoint formatting, keys and the rejection of command-style interface names and default routes. End-to-end network tests require a disposable Linux network namespace or virtual machine and root permissions.
+The project structure is generated from the official `@iobroker/create-adapter` TypeScript/JSONConfig template. Unit tests cover configuration normalization, endpoint formatting, keys and the rejection of command-style interface names and default routes. The integration test starts the adapter in the standard ioBroker test harness. End-to-end WireGuard network tests still require a disposable Linux network namespace or virtual machine and root permissions.
+
+Use `npm run release` to prepare releases after npm trusted publishing and the deploy job in `.github/workflows/test-and-release.yml` have been configured.
 
 ## Uninstall the helper
 
 Bring down every managed instance first, then run:
 
 ```bash
-sudo ./scripts/uninstall-helper.sh
+sudo /opt/iobroker/node_modules/iobroker.wireguard-s2s/scripts/uninstall-helper.sh
 ```
 
 The uninstaller removes the helper and sudo policy. It intentionally leaves interfaces and `/var/lib/iobroker-wireguard-s2s` untouched so uninstalling a package cannot silently destroy live network state.
 
+## Changelog
+
+### **WORK IN PROGRESS**
+
+- Migrate the project to the current official ioBroker Adapter Creator structure.
+- Add standard linting, type checking, package tests, integration tests and release workflow.
+- Move JSONConfig texts to the ioBroker i18n structure.
+- Use adapter-managed timers and stop active helper processes during unload.
+
+### 0.2.0 (2026-09-02)
+
+- Add private/public WireGuard key generation to the adapter configuration.
+- Return generated keys only to ioBroker Admin instances.
+- Store the private key through ioBroker's encrypted native configuration.
+
+### 0.1.0 (2026-08-31)
+
+- Initial implementation.
+- Configure one IPv4/IPv6 WireGuard site-to-site peer.
+- Monitor interface state, handshakes and traffic counters.
+- Add a root-owned, strictly validating privileged helper.
+
 ## License
 
 MIT
+
+Copyright (c) 2026 Andreas Metag

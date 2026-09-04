@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { spawn } from "node:child_process";
+import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import type { HelperApplyConfig, HelperDoctorResult, HelperStatus } from "./types";
 
 interface HelperEnvelope<T> {
@@ -8,12 +8,27 @@ interface HelperEnvelope<T> {
     error?: string;
 }
 
+interface HelperTimers {
+    scheduleTimeout(callback: () => void, timeout: number): ioBroker.Timeout | undefined;
+    cancelTimeout(timeout: ioBroker.Timeout): void;
+}
+
 export class HelperClient {
     public static readonly helperPath = "/usr/local/libexec/iobroker-wireguard-s2s-helper";
     private readonly sudoPath: string;
+    private readonly activeChildren = new Set<ChildProcessWithoutNullStreams>();
+    private closed = false;
 
-    public constructor() {
+    public constructor(private readonly timers: HelperTimers) {
         this.sudoPath = ["/usr/bin/sudo", "/bin/sudo"].find(existsSync) ?? "/usr/bin/sudo";
+    }
+
+    public close(): void {
+        this.closed = true;
+        for (const child of this.activeChildren) {
+            child.kill("SIGKILL");
+        }
+        this.activeChildren.clear();
     }
 
     public doctor(): Promise<HelperDoctorResult> {
@@ -33,16 +48,18 @@ export class HelperClient {
     }
 
     private call<T>(action: string, payload?: unknown): Promise<T> {
+        if (this.closed) {
+            return Promise.reject(new Error("Privileged helper client is closed"));
+        }
         return new Promise<T>((resolve, reject) => {
-            const child = spawn(
-                this.sudoPath,
-                ["-n", "--", HelperClient.helperPath, action],
-                { stdio: ["pipe", "pipe", "pipe"] },
-            );
+            const child = spawn(this.sudoPath, ["-n", "--", HelperClient.helperPath, action], {
+                stdio: ["pipe", "pipe", "pipe"],
+            });
+            this.activeChildren.add(child);
             let stdout = "";
             let stderr = "";
             let outputTooLarge = false;
-            const timeout = setTimeout(() => child.kill("SIGKILL"), 15_000);
+            const timeout = this.timers.scheduleTimeout(() => child.kill("SIGKILL"), 15_000);
 
             child.stdout.setEncoding("utf8");
             child.stderr.setEncoding("utf8");
@@ -60,11 +77,17 @@ export class HelperClient {
                 }
             });
             child.on("error", error => {
-                clearTimeout(timeout);
+                if (timeout) {
+                    this.timers.cancelTimeout(timeout);
+                }
+                this.activeChildren.delete(child);
                 reject(new Error(`Cannot start the privileged helper: ${error.message}`));
             });
             child.on("close", code => {
-                clearTimeout(timeout);
+                if (timeout) {
+                    this.timers.cancelTimeout(timeout);
+                }
+                this.activeChildren.delete(child);
                 if (outputTooLarge) {
                     reject(new Error("Privileged helper returned too much data"));
                     return;

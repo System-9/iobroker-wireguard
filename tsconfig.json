@@ -1,22 +1,17 @@
 {
+  "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "outDir": "build",
-    "rootDir": "src",
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "sourceMap": true
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "noEmitOnError": true,
+    "outDir": "./build/",
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "types": ["node", "mocha"],
+    "sourceMap": true,
+    "inlineSourceMap": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["build/**", "node_modules/**"]
 }

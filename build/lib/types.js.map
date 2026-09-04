@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/lib/types.ts"],
+  "sourcesContent": ["export interface HelperApplyConfig {\n    interfaceName: string;\n    localAddresses: string[];\n    privateKey: string;\n    listenPort: number;\n    peer: {\n        publicKey: string;\n        presharedKey?: string;\n        endpoint?: string;\n        allowedIPs: string[];\n        persistentKeepalive: number;\n    };\n    mtu?: number;\n    enableIPv4Forwarding: boolean;\n    enableIPv6Forwarding: boolean;\n}\n\nexport interface HelperPeerStatus {\n    publicKey: string;\n    endpoint: string;\n    allowedIPs: string[];\n    latestHandshake: number;\n    rxBytes: number;\n    txBytes: number;\n    persistentKeepalive: number;\n}\n\nexport interface HelperStatus {\n    exists: boolean;\n    owned: boolean;\n    up: boolean;\n    interfaceName: string;\n    publicKey: string;\n    listenPort: number;\n    peers: HelperPeerStatus[];\n}\n\nexport interface HelperDoctorResult {\n    platform: string;\n    helperVersion: string;\n    binaries: Record<string, string>;\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;AAAA;AAAA;",
+  "names": []
+}
