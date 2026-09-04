@@ -28,7 +28,11 @@ export function generateWireGuardKeyPair(): WireGuardKeyPair {
     };
 }
 
-/** Derives the public X25519 key belonging to a WireGuard private key. */
+/**
+ * Derives the public X25519 key belonging to a WireGuard private key.
+ *
+ * @param privateKey
+ */
 export function deriveWireGuardPublicKey(privateKey: string): string {
     if (!isWireGuardKey(privateKey)) {
         throw new Error("Private key is not a valid WireGuard key");

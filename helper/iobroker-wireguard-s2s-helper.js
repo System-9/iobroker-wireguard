@@ -70,9 +70,7 @@ async function run(name, args, allowFailure = false) {
                 stderr: typeof error.stderr === "string" ? error.stderr : "",
             };
         }
-        const detail = typeof error.stderr === "string" && error.stderr.trim()
-            ? error.stderr.trim()
-            : error.message;
+        const detail = typeof error.stderr === "string" && error.stderr.trim() ? error.stderr.trim() : error.message;
         throw new Error(`${name} failed: ${detail}`);
     }
 }

@@ -1,7 +1,13 @@
-node_modules/
-build/
+*.code-workspace
+node_modules
+nbproject
 coverage/
-*.tgz
+iobroker.*.tgz
+Thumbs.db
 .DS_Store
 *.log
 work/
+.commitinfo
+
+admin/i18n/flat.txt
+admin/i18n/*/flat.txt

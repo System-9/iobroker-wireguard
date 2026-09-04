@@ -1,21 +1,26 @@
 import * as utils from "@iobroker/adapter-core";
-import { validateConfig, type AdapterNativeConfig, type ValidatedConfig } from "./lib/config";
+import { validateConfig, type ValidatedConfig } from "./lib/config";
 import { HelperClient } from "./lib/helper-client";
 import { deriveWireGuardPublicKey, generateWireGuardKeyPair } from "./lib/keys";
 import { isAuthorizedAdminSender } from "./lib/message-security";
 import type { HelperStatus } from "./lib/types";
 
-export class WireguardS2S extends utils.Adapter {
-    private readonly helper = new HelperClient();
-    private pollTimer?: NodeJS.Timeout;
+class WireguardS2S extends utils.Adapter {
+    private readonly helper: HelperClient;
+    private pollTimer?: ioBroker.Interval;
     private validated?: ValidatedConfig;
     private operationChain: Promise<void> = Promise.resolve();
     private lastReportedError = "";
+    private shuttingDown = false;
 
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({
             ...options,
             name: "wireguard-s2s",
+        });
+        this.helper = new HelperClient({
+            scheduleTimeout: (callback, timeout) => this.setTimeout(callback, timeout),
+            cancelTimeout: timeout => this.clearTimeout(timeout),
         });
         this.on("ready", this.onReady.bind(this));
         this.on("message", this.onMessage.bind(this));
@@ -43,7 +48,7 @@ export class WireguardS2S extends utils.Adapter {
         }
 
         try {
-            this.validated = validateConfig(this.config as unknown as AdapterNativeConfig);
+            this.validated = validateConfig(this.config);
             await this.setStateAsync("info.configValid", true, true);
             await this.setStateAsync("info.interfaceName", this.validated.helperConfig.interfaceName, true);
             await this.setStateAsync("info.localNetworks", this.validated.localNetworks.join(", "), true);
@@ -69,10 +74,13 @@ export class WireguardS2S extends utils.Adapter {
     }
 
     private onUnload(callback: () => void): void {
+        this.shuttingDown = true;
         if (this.pollTimer) {
-            clearInterval(this.pollTimer);
+            this.clearInterval(this.pollTimer);
+            this.pollTimer = undefined;
         }
-        this.setState("info.connection", false, true, () => callback());
+        this.helper.close();
+        void this.setState("info.connection", false, true, () => callback());
     }
 
     private onMessage(message: ioBroker.Message): void {
@@ -108,7 +116,7 @@ export class WireguardS2S extends utils.Adapter {
     }
 
     private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
-        if (!state || state.ack || state.val !== true) {
+        if (this.shuttingDown || !state || state.ack || state.val !== true) {
             return;
         }
         const localId = id.startsWith(`${this.namespace}.`) ? id.slice(this.namespace.length + 1) : id;
@@ -126,24 +134,28 @@ export class WireguardS2S extends utils.Adapter {
             .then(action, action)
             .catch(async error => {
                 const message = this.errorMessage(error);
+                if (this.shuttingDown) {
+                    return;
+                }
                 this.log.error(`WireGuard control action failed: ${message}`);
                 await this.reportError(message);
             })
-            .finally(() => this.setStateAsync(localId, false, true).then(() => undefined));
+            .finally(() => {
+                if (!this.shuttingDown) {
+                    return this.setStateAsync(localId, false, true).then(() => undefined);
+                }
+            });
     }
 
     private startPolling(): void {
         if (!this.validated) {
             return;
         }
-        this.pollTimer = setInterval(
-            () => void this.refreshStatus(false),
-            this.validated.pollInterval * 1_000,
-        );
+        this.pollTimer = this.setInterval(() => void this.refreshStatus(false), this.validated.pollInterval * 1_000);
     }
 
     private async applyConfiguration(): Promise<void> {
-        this.validated = validateConfig(this.config as unknown as AdapterNativeConfig);
+        this.validated = validateConfig(this.config);
         this.log.info(`Applying WireGuard configuration to ${this.validated.helperConfig.interfaceName}`);
         const status = await this.helper.apply(this.validated.helperConfig);
         await this.updateStatus(status);
@@ -152,7 +164,7 @@ export class WireguardS2S extends utils.Adapter {
 
     private async bringDown(): Promise<void> {
         if (!this.validated) {
-            this.validated = validateConfig(this.config as unknown as AdapterNativeConfig);
+            this.validated = validateConfig(this.config);
         }
         this.log.info(`Bringing down managed WireGuard interface ${this.validated.helperConfig.interfaceName}`);
         const status = await this.helper.down(this.validated.helperConfig.interfaceName);
@@ -161,7 +173,7 @@ export class WireguardS2S extends utils.Adapter {
     }
 
     private async refreshStatus(logErrors: boolean): Promise<void> {
-        if (!this.validated) {
+        if (this.shuttingDown || !this.validated) {
             return;
         }
         try {
@@ -181,15 +193,16 @@ export class WireguardS2S extends utils.Adapter {
 
     private async updateStatus(status: HelperStatus): Promise<void> {
         const nowSeconds = Math.floor(Date.now() / 1_000);
-        const peer = status.peers.find(item => item.publicKey === this.validated?.helperConfig.peer.publicKey)
-            ?? status.peers[0];
+        const peer =
+            status.peers.find(item => item.publicKey === this.validated?.helperConfig.peer.publicKey) ??
+            status.peers[0];
         const handshakeAge = peer?.latestHandshake ? Math.max(0, nowSeconds - peer.latestHandshake) : -1;
         const connected = Boolean(
-            status.exists
-            && status.up
-            && peer
-            && handshakeAge >= 0
-            && handshakeAge <= (this.validated?.handshakeTimeout ?? 180),
+            status.exists &&
+            status.up &&
+            peer &&
+            handshakeAge >= 0 &&
+            handshakeAge <= (this.validated?.handshakeTimeout ?? 180),
         );
 
         await Promise.all([

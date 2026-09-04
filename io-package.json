@@ -4,24 +4,60 @@
     "version": "0.2.0",
     "titleLang": {
       "en": "WireGuard Site-to-Site",
-      "de": "WireGuard Site-to-Site"
+      "de": "WireGuard Site-to-Site",
+      "ru": "WireGuard между сайтами",
+      "pt": "WireGuard site a site",
+      "nl": "WireGuard van site tot site",
+      "fr": "WireGuard de site à site",
+      "it": "WireGuard da sito a sito",
+      "es": "WireGuard de sitio a sitio",
+      "pl": "WireGuard typu site-to-site",
+      "uk": "WireGuard Site-to-Site",
+      "zh-cn": "WireGuard 站点到站点"
     },
     "desc": {
       "en": "Safely configure and monitor one WireGuard site-to-site tunnel on an ioBroker Linux host.",
-      "de": "Konfiguriert und überwacht sicher einen WireGuard-Site-to-Site-Tunnel auf einem ioBroker-Linux-Host."
+      "de": "Konfiguriert und überwacht sicher einen WireGuard-Site-to-Site-Tunnel auf einem ioBroker-Linux-Host.",
+      "ru": "Безопасная настройка и мониторинг туннеля WireGuard типа «сеть-сеть» на хосте ioBroker Linux.",
+      "pt": "Configure e monitore com segurança um túnel site a site WireGuard em um host ioBroker Linux.",
+      "nl": "Configureer en bewaak veilig één WireGuard-site-to-site-tunnel op een ioBroker Linux-host.",
+      "fr": "Configurez et surveillez en toute sécurité un tunnel site à site WireGuard sur un hôte Linux ioBroker.",
+      "it": "Configura e monitora in sicurezza un tunnel da sito a sito WireGuard su un host Linux ioBroker.",
+      "es": "Configure y supervise de forma segura un túnel de sitio a sitio WireGuard en un host Linux ioBroker.",
+      "pl": "Bezpiecznie konfiguruj i monitoruj jeden tunel WireGuard typu site-to-site na hoście ioBroker Linux.",
+      "uk": "Безпечно налаштовуйте та відстежуйте один міжсайтовий тунель WireGuard на хості ioBroker Linux.",
+      "zh-cn": "在 ioBroker Linux 主机上安全地配置和监控一条 WireGuard 站点到站点隧道。"
     },
     "news": {
       "0.2.0": {
         "en": "Added secure private/public key generation to the adapter configuration page.",
-        "de": "Sichere Erzeugung privater und öffentlicher Schlüssel in der Adapterkonfiguration ergänzt."
+        "de": "Sichere Erzeugung privater und öffentlicher Schlüssel in der Adapterkonfiguration ergänzt.",
+        "ru": "На страницу конфигурации адаптера добавлено безопасное создание закрытого/открытого ключа.",
+        "pt": "Adicionada geração segura de chave privada/pública à página de configuração do adaptador.",
+        "nl": "Veilige generatie van privé/openbare sleutels toegevoegd aan de adapterconfiguratiepagina.",
+        "fr": "Ajout de la génération sécurisée de clés privées/publiques à la page de configuration de l'adaptateur.",
+        "it": "Aggiunta la generazione sicura di chiavi private/pubbliche alla pagina di configurazione dell'adattatore.",
+        "es": "Se agregó generación segura de claves públicas/privadas a la página de configuración del adaptador.",
+        "pl": "Do strony konfiguracji adaptera dodano generowanie bezpiecznego klucza prywatnego/publicznego.",
+        "uk": "На сторінку конфігурації адаптера додано створення безпечного приватного/відкритого ключа.",
+        "zh-cn": "在适配器配置页面中添加了安全私钥/公钥生成。"
       },
       "0.1.0": {
         "en": "Initial implementation with one site-to-site peer, monitoring and a privileged helper.",
-        "de": "Erste Implementierung mit einer Site-to-Site-Gegenstelle, Monitoring und privilegiertem Helper."
+        "de": "Erste Implementierung mit einer Site-to-Site-Gegenstelle, Monitoring und privilegiertem Helper.",
+        "ru": "Начальная реализация с одним одноранговым соединением, мониторингом и привилегированным помощником.",
+        "pt": "Implementação inicial com um peer site a site, monitoramento e um auxiliar privilegiado.",
+        "nl": "Initiële implementatie met één site-to-site peer, monitoring en een bevoorrechte helper.",
+        "fr": "Mise en œuvre initiale avec un homologue site à site, une surveillance et un assistant privilégié.",
+        "it": "Implementazione iniziale con un peer da sito a sito, monitoraggio e un aiutante privilegiato.",
+        "es": "Implementación inicial con un par de sitio a sitio, monitoreo y un ayudante privilegiado.",
+        "pl": "Wstępne wdrożenie z jednym partnerem typu site-to-site, monitorowaniem i uprzywilejowanym pomocnikiem.",
+        "uk": "Початкове впровадження з одним одноранговим вузлом, моніторингом і привілейованим помічником.",
+        "zh-cn": "最初的实施是通过一个站点到站点的对等、监控和特权帮助者进行的。"
       }
     },
     "authors": [
-      "Andreas Metag"
+      "System_9 <system9.game@gmail.com>"
     ],
     "keywords": [
       "wireguard",
@@ -34,15 +70,17 @@
       "license": "MIT"
     },
     "platform": "Javascript/Node.js",
-    "main": "build/main.js",
     "icon": "wireguard-s2s.svg",
-    "extIcon": "https://raw.githubusercontent.com/System-9/iobroker-wireguard/main/admin/wireguard-s2s.svg",
+    "extIcon": "https://raw.githubusercontent.com/System-9/ioBroker.wireguard-s2s/main/admin/wireguard-s2s.svg",
+    "readme": "https://github.com/System-9/ioBroker.wireguard-s2s/blob/main/README.md",
     "mode": "daemon",
     "type": "network",
     "connectionType": "local",
     "dataSource": "poll",
     "compact": true,
-    "messagebox": true,
+    "supportedMessages": {
+      "custom": true
+    },
     "enabled": false,
     "loglevel": "info",
     "stopBeforeUpdate": true,
@@ -57,7 +95,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=6.12.3"
+        "admin": ">=7.6.20"
       }
     ]
   },
@@ -143,7 +181,7 @@
           "de": "Privilegierter Helper bereit"
         },
         "type": "boolean",
-        "role": "indicator.ready",
+        "role": "indicator.reachable",
         "read": true,
         "write": false,
         "def": false
@@ -239,8 +277,7 @@
           "de": "WireGuard-Listen-Port"
         },
         "type": "number",
-        "role": "value",
-        "unit": "",
+        "role": "info.port",
         "read": true,
         "write": false,
         "def": 0
@@ -348,7 +385,7 @@
         },
         "type": "number",
         "role": "value.interval",
-        "unit": "s",
+        "unit": "sec",
         "read": true,
         "write": false,
         "def": -1

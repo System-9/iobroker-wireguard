@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/lib/message-security.ts"],
+  "sourcesContent": ["/**\n * Only ioBroker Admin instances may receive newly generated private keys.\n *\n * @param sender\n */\nexport function isAuthorizedAdminSender(sender: string): boolean {\n    return /^(?:system\\.adapter\\.)?admin\\.\\d+$/.test(sender);\n}\n"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAKO,SAAS,wBAAwB,QAAyB;AAC7D,SAAO,qCAAqC,KAAK,MAAM;AAC3D;",
+  "names": []
+}
